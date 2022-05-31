@@ -19,10 +19,23 @@ const products = [
 ]
 //---
 
+
 app.get( '/', ( req, res ) => {
   res.send( 'Hello World from Express!' );
 } );
 
+//Categories
+app.get( '/categories/:categoryId/subcategories/:subcategoryId', ( req, res ) => {
+  const categoryId = req.params.categoryId;
+  const subcategoryId = req.params.subcategoryId;
+
+  res.json( {
+    category: categoryId,
+    subcategory: subcategoryId
+  } ); //Response with JSON
+} );
+
+//Products
 app.get( '/products/', ( req, res ) => {
   res.json( products ); //Response with JSON
 } );
@@ -32,6 +45,8 @@ app.get( '/products/:id', ( req, res ) => {
 
   res.json( products[ id ] ); //Response with JSON
 } );
+
+
 
 //---
 app.listen( port, host, () => {
