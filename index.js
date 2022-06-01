@@ -46,7 +46,21 @@ app.get( '/products/:id', ( req, res ) => {
   res.json( products[ id ] ); //Response with JSON
 } );
 
+//Query Params
+app.get( '/query-params', ( req, res ) => {
+  const limit = req.query.limit;
+  const offset = req.query.offset;
 
+  if ( limit || offset ) {
+    res.json( {
+      limit: limit,
+      offset: offset
+    } );
+  } else {
+    res.send( 'Neither "limit" nor "offset" query parameters received!' );
+  }
+
+} );
 
 //---
 app.listen( port, host, () => {
