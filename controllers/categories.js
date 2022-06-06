@@ -1,10 +1,5 @@
 const faker = require( 'faker' );
 
-function randomAmount( min = 20, max = 100 ) {
-  const randomNumber = Math.floor( Math.random() * ( max - min + 1 ) ) + min;
-  return( randomNumber );
-}
-
 const products = [];
 
 function createProducts( amount ) {
@@ -23,7 +18,10 @@ module.exports = {
 
   create: function( amount = 1 ) {
     if ( amount === 'random' ) {
-      amount = randomAmount();
+      amount = faker.datatype.number( {
+        'min': 1,
+        'max': 10
+      } );
     }
 
     createProducts( amount );

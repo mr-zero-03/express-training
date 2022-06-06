@@ -1,41 +1,18 @@
 const express = require( 'express' );
-const app = express();
+const app = express(); //appRouter - expressRouter - router
+const apiRoutes = require( './routes' );
 
+
+//--
 const host = 'localhost';
 const port = 3000;
-
-//---
-const products = require( './products' );
-//---
+//--
 
 app.get( '/', ( req, res ) => {
   res.send( 'Welcome World to my Tiendita from Express!' );
 } );
 
-//Products
-app.post( '/products/', ( req, res ) => {
-  const amount = req.query.amount;
-
-  if ( !isNaN( parseInt( amount ) ) ) {
-    products.create( amount );
-  } else {
-    products.create();
-  }
-
-  res.json( {
-    message: 'Products created correctly'
-  } );
-} );
-
-app.get( '/products/', ( req, res ) => {
-  res.json( products.read() );
-} );
-
-app.get( '/products/:id', ( req, res ) => {
-  const id = req.params.id;
-
-  res.json( products.read( id ) );
-} );
+apiRoutes( app ); //Routes manager
 
 //---
 app.listen( port, host, () => {
