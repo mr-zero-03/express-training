@@ -1,8 +1,8 @@
-const faker = require( 'faker' );
+//const faker = require( 'faker' );
 
 const products = [];
 
-function createProducts( amount ) {
+/*function createProducts( amount ) { //Create (Multiple and random)
   const productsSize = products.length;
   for ( let i = 0; i < amount; i++ ) {
     products.push( {
@@ -12,19 +12,34 @@ function createProducts( amount ) {
       image: faker.image.imageUrl()
     } );
   }
+
+  return( products[ productsSize - 1 ] );
+}*/
+
+function createProduct( product ) { //Create (Receives JSON)
+  const productsSize = products.length;
+
+  products.push( {
+    id: productsSize,
+    name: product.name,
+    price: product.price,
+    image: product.image
+  } );
+
+  return( products[ productsSize ] );
 }
 
 module.exports = {
 
-  create: function( amount = 1 ) {
-    if ( amount === 'random' ) {
+  create: function( product ) {
+    /*if ( amount === 'random' ) {
       amount = faker.datatype.number( {
         'min': 20,
         'max': 100
       } );
-    }
+    }*/
 
-    createProducts( amount );
+    createProduct( product );
   },
 
   read: function( id = null ) {
