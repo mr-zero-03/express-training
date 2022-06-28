@@ -29,6 +29,24 @@ function createProduct( product ) { //Create (Receives JSON)
   return( products[ productsSize ] );
 }
 
+function updateProduct( id, data, type ) {
+
+  if ( products[ id ] === undefined ) {
+    return( 'The product with the id:' + id + ' does not exists' );
+  }
+
+  if ( type === 'put' ) {
+    products[ id ] = data;
+  } else if ( type === 'patch' ) {
+    products[ id ] = {
+      ...products[ id ],
+      ...data
+    }
+  }
+
+  return( products[ id ] );
+}
+
 module.exports = {
 
   create: function( product ) {
@@ -48,6 +66,10 @@ module.exports = {
     } else {
       return( products );
     }
+  },
+
+  update: function( id, data, type = 'patch' ) {
+    updateProduct( id, data, type );
   }
 
 }
