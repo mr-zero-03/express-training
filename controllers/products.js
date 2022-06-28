@@ -47,6 +47,10 @@ function updateProduct( id, data, type ) {
   return( products[ id ] );
 }
 
+function deleteProduct( id ) {
+  products[ id ] = undefined;
+}
+
 module.exports = {
 
   create: function( product ) {
@@ -70,6 +74,10 @@ module.exports = {
 
   update: function( id, data, type = 'patch' ) {
     updateProduct( id, data, type );
+  },
+
+  delete: function( id ) {
+    deleteProduct( id );
   }
 
 }

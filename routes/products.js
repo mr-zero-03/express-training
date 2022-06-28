@@ -76,5 +76,18 @@ router.patch( '/:id', ( req, res ) => { //Update (Partial Update)
 
 } );
 
+// --- Delete ---
+router.delete( '/:id', ( req, res ) => { //Update (Partial Update)
+  const id = req.params.id;
+
+  const deletedProduct = products.delete( id );
+
+  res.json( {
+    message: 'Product deleted correctly',
+    id: id,
+  } );
+
+} );
+
 //---
 module.exports = router;
