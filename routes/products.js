@@ -29,7 +29,7 @@ router.post( '/', ( req, res ) => {
 
   const createdProduct = products.create( body ); //It looks like this is asynchronous, so I will handle it in the future 
 
-  res.json( {
+  res.status( 201 ).json( {
     message: 'Product created correctly',
     data: body
   } );
