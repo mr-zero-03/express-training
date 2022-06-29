@@ -5,74 +5,65 @@ const router = express.Router();
 const ProductServices = require( '../services/products' );
 const products = new ProductServices();
 
-//-- Routes
+        /* -- ROUTES -- */
 router.use( express.json() ); //Middleware to manage the JSON
+
 
 // --- Create ---
 router.post( '/', ( req, res ) => {
   const body = req.body;
 
-  const createdProduct = products.create( body ); //It looks like this is asynchronous, so I will handle it in the future 
+  const created = products.create( body );
 
-  res.status( 201 ).json( {
-    message: 'Product created correctly',
-    data: body
-  } );
-
+  res.status( 201 ).json( created );
 } );
+
 
 // --- Read ---
-router.get( '/', ( req, res ) => { //Read (List)
-  res.json( products.read() );
+router.get( '/', ( req, res ) => { //(List)
+  const readed = products.read();
+
+  res.json( readed );
 } );
 
-router.get( '/:id', ( req, res ) => { //Read (Show)
+router.get( '/:id', ( req, res ) => { //(Show)
   const id = req.params.id;
 
-  res.json( products.read( id ) );
+  const readed = products.read( id );
+
+  res.json( readed );
 } );
 
+
 // --- Update ---
-router.put( '/:id', ( req, res ) => { //Update (Complete Update)
+router.put( '/:id', ( req, res ) => { //(Complete Update)
   const id = req.params.id;
   const body = req.body;
 
   const updatedProduct = products.update( id, body, 'put' );
 
-  res.json( {
-    message: 'Product updated correctly',
-    id: id,
-    data: body
-  } );
-
+  res.json( updatedProduct );
 } );
 
-router.patch( '/:id', ( req, res ) => { //Update (Partial Update)
+router.patch( '/:id', ( req, res ) => { //(Partial Update)
   const id = req.params.id;
   const body = req.body;
 
   const updatedProduct = products.update( id, body, 'patch' );
 
-  res.json( {
-    message: 'Product updated correctly',
-    id: id,
-    data: body
-  } );
-
+  res.json( updatedProduct );
 } );
 
+
 // --- Delete ---
-router.delete( '/:id', ( req, res ) => { //Update (Partial Update)
+router.delete( '/:id', ( req, res ) => {
   const id = req.params.id;
 
   const deletedProduct = products.delete( id );
 
-  res.json( {
-    message: 'Product deleted correctly',
-    id: id,
-  } );
-
+  res.json( deletedProduct );
 } );
 
-//---
+
+//--
 module.exports = router;

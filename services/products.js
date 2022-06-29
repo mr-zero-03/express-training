@@ -7,7 +7,7 @@ class ProductServices {
     this.generate();
   }
 
-  generate( amount = 10 ) { //(Random)
+  generate( amount = 10 ) { //(Random creation)
     for ( let i = 0; i < amount; i++ ) {
       this.products.push( {
         id: faker.datatype.uuid(),
@@ -18,18 +18,31 @@ class ProductServices {
     }
   }
 
+  getIndex( id ) {
+    if ( id === null ) {
+      throw new Error( 'The product ID is necessary' );
+    }
+
+    const index = this.products.findIndex( ( item ) => { return( item.id === id ); } );
+    if ( index === -1 ) {
+      throw new Error( 'The product ID does not exists' );
+    }
+
+    return( index );
+  }
+
   //--- Create ---
   create( product ) { //(Receives JSON)
-    this.products.push( {
+    const newProduct = {
       id: faker.datatype.uuid(),
       name: product.name,
       price: product.price,
       image: product.image
-    } );
+    }
 
-    const productsSize = this.products.length;
+    this.products.push( newProduct );
 
-    return( this.products[ productsSize - 1 ] );
+    return( newProduct );
   }
 
   //--- Read ---
@@ -44,43 +57,31 @@ class ProductServices {
 
   //--- Update ---
   update( id, data, type = 'patch' ) {
-    if ( id === null ) {
-      return( 'The product ID is necessary' );
-    }
-
-    const productIndex = this.products.findIndex( ( item ) => { return( item.id === id ); } );
-    if ( productIndex === -1 ) {
-      return( 'The product ID does not exists' );
-    }
+    const index = this.getIndex( id );
 
     if ( type === 'put' ) {
-      this.products[ productIndex ] = {
-        id: this.products[ productIndex ].id,
+      this.products[ index ] = {
+        id: this.products[ index ].id,
         ...data
       };
     } else if ( type === 'patch' ) {
-      this.products[ productIndex ] = {
-        ...this.products[ productIndex ],
+      this.products[ index ] = {
+        ...this.products[ index ],
         ...data
       }
     }
 
-    return( this.products[ productIndex ] );
+    return( this.products[ index ] );
 
   }
 
   //--- Delete ---
   delete( id = null ) {
-    if ( id === null ) {
-      return( 'The product ID is necessary' );
-    }
+    const index = this.getIndex( id );
 
-    const productIndex = this.products.findIndex( ( item ) => { return( item.id === id ); } );
-    if ( productIndex === -1 ) {
-      return( 'The product ID does not exists' );
-    }
+    const deletedObject = this.products.splice( index, 1 );
 
-    this.products.splice( productIndex, 1 );
+    return( deletedObject );
   }
 }
 
