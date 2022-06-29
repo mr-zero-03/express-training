@@ -1,83 +1,87 @@
-//const faker = require( 'faker' );
+const faker = require( 'faker' );
 
-const products = [];
+class ProductServices {
 
-/*function createProducts( amount ) { //Create (Multiple and random)
-  const productsSize = products.length;
-  for ( let i = 0; i < amount; i++ ) {
-    products.push( {
-      id: ( productsSize + i ),
-      name: faker.commerce.productName(),
-      price: parseInt( faker.commerce.price(), 10 ),
-      image: faker.image.imageUrl()
-    } );
+  constructor() {
+    this.products = [];
+    this.generate();
   }
 
-  return( products[ productsSize - 1 ] );
-}*/
-
-function createProduct( product ) { //Create (Receives JSON)
-  const productsSize = products.length;
-
-  products.push( {
-    id: productsSize,
-    name: product.name,
-    price: product.price,
-    image: product.image
-  } );
-
-  return( products[ productsSize ] );
-}
-
-function updateProduct( id, data, type ) {
-
-  if ( products[ id ] === undefined ) {
-    return( 'The product with the id:' + id + ' does not exists' );
-  }
-
-  if ( type === 'put' ) {
-    products[ id ] = data;
-  } else if ( type === 'patch' ) {
-    products[ id ] = {
-      ...products[ id ],
-      ...data
-    }
-  }
-
-  return( products[ id ] );
-}
-
-function deleteProduct( id ) {
-  products[ id ] = undefined;
-}
-
-module.exports = {
-
-  create: function( product ) {
-    /*if ( amount === 'random' ) {
-      amount = faker.datatype.number( {
-        'min': 20,
-        'max': 100
+  generate( amount = 10 ) { //(Random)
+    for ( let i = 0; i < amount; i++ ) {
+      this.products.push( {
+        id: faker.datatype.uuid(),
+        name: faker.commerce.productName(),
+        price: parseInt( faker.commerce.price(), 10 ),
+        image: faker.image.imageUrl()
       } );
-    }*/
-
-    createProduct( product );
-  },
-
-  read: function( id = null ) {
-    if ( !isNaN( parseInt( id ) ) ) {
-      return( products[ id ] );
-    } else {
-      return( products );
     }
-  },
-
-  update: function( id, data, type = 'patch' ) {
-    updateProduct( id, data, type );
-  },
-
-  delete: function( id ) {
-    deleteProduct( id );
   }
 
+  //--- Create ---
+  create( product ) { //(Receives JSON)
+    this.products.push( {
+      id: faker.datatype.uuid(),
+      name: product.name,
+      price: product.price,
+      image: product.image
+    } );
+
+    const productsSize = this.products.length;
+
+    return( this.products[ productsSize - 1 ] );
+  }
+
+  //--- Read ---
+  read( id = null ) {
+    if ( id !== null ) {
+      const product = this.products.find( ( item ) => { return( item.id === id ); } );
+      return( product );
+    } else {
+      return( this.products );
+    }
+  }
+
+  //--- Update ---
+  update( id, data, type = 'patch' ) {
+    if ( id === null ) {
+      return( 'The product ID is necessary' );
+    }
+
+    const productIndex = this.products.findIndex( ( item ) => { return( item.id === id ); } );
+    if ( productIndex === -1 ) {
+      return( 'The product ID does not exists' );
+    }
+
+    if ( type === 'put' ) {
+      this.products[ productIndex ] = {
+        id: this.products[ productIndex ].id,
+        ...data
+      };
+    } else if ( type === 'patch' ) {
+      this.products[ productIndex ] = {
+        ...this.products[ productIndex ],
+        ...data
+      }
+    }
+
+    return( this.products[ productIndex ] );
+
+  }
+
+  //--- Delete ---
+  delete( id = null ) {
+    if ( id === null ) {
+      return( 'The product ID is necessary' );
+    }
+
+    const productIndex = this.products.findIndex( ( item ) => { return( item.id === id ); } );
+    if ( productIndex === -1 ) {
+      return( 'The product ID does not exists' );
+    }
+
+    this.products.splice( productIndex, 1 );
+  }
 }
+
+module.exports = ProductServices;
