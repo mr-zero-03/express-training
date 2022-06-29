@@ -2,7 +2,7 @@ const express = require( 'express' );
 const router = express.Router();
 
 //--
-const ProductServices = require( '../controllers/products' );
+const ProductServices = require( '../services/products' );
 const products = new ProductServices();
 
 //-- Routes

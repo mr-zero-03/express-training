@@ -2,7 +2,7 @@ const express = require( 'express' );
 const router = express.Router();
 
 //--
-const categories = require( '../controllers/categories' );
+const categories = require( '../services/categories' );
 
 //-- Routes
 router.post( '/', ( req, res ) => { //Create
