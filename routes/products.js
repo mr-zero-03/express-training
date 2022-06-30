@@ -10,56 +10,56 @@ router.use( express.json() ); //Middleware to manage the JSON
 
 
 // --- Create ---
-router.post( '/', ( req, res ) => {
+router.post( '/', async( req, res ) => {
   const body = req.body;
 
-  const created = products.create( body );
+  const created = await products.create( body );
 
   res.status( 201 ).json( created );
 } );
 
 
 // --- Read ---
-router.get( '/', ( req, res ) => { //(List)
-  const readed = products.read();
+router.get( '/', async( req, res ) => { //(List)
+  const readed = await products.read();
 
   res.json( readed );
 } );
 
-router.get( '/:id', ( req, res ) => { //(Show)
+router.get( '/:id', async( req, res ) => { //(Show)
   const id = req.params.id;
 
-  const readed = products.read( id );
+  const readed = await products.read( id );
 
   res.json( readed );
 } );
 
 
 // --- Update ---
-router.put( '/:id', ( req, res ) => { //(Complete Update)
+router.put( '/:id', async( req, res ) => { //(Complete Update)
   const id = req.params.id;
   const body = req.body;
 
-  const updatedProduct = products.update( id, body, 'put' );
+  const updatedProduct = await products.update( id, body, 'put' );
 
   res.json( updatedProduct );
 } );
 
-router.patch( '/:id', ( req, res ) => { //(Partial Update)
+router.patch( '/:id', async( req, res ) => { //(Partial Update)
   const id = req.params.id;
   const body = req.body;
 
-  const updatedProduct = products.update( id, body, 'patch' );
+  const updatedProduct = await products.update( id, body, 'patch' );
 
   res.json( updatedProduct );
 } );
 
 
 // --- Delete ---
-router.delete( '/:id', ( req, res ) => {
+router.delete( '/:id', async( req, res ) => {
   const id = req.params.id;
 
-  const deletedProduct = products.delete( id );
+  const deletedProduct = await products.delete( id );
 
   res.json( deletedProduct );
 } );

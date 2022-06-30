@@ -32,7 +32,7 @@ class ProductServices {
   }
 
   //--- Create ---
-  create( product ) { //(Receives JSON)
+  async create( product ) { //(Receives JSON)
     const newProduct = {
       id: faker.datatype.uuid(),
       name: product.name,
@@ -46,7 +46,7 @@ class ProductServices {
   }
 
   //--- Read ---
-  read( id = null ) {
+  async read( id = null ) {
     if ( id !== null ) {
       const product = this.products.find( ( item ) => { return( item.id === id ); } );
       return( product );
@@ -56,7 +56,7 @@ class ProductServices {
   }
 
   //--- Update ---
-  update( id, data, type = 'patch' ) {
+  async update( id, data, type = 'patch' ) {
     const index = this.getIndex( id );
 
     if ( type === 'put' ) {
@@ -76,7 +76,7 @@ class ProductServices {
   }
 
   //--- Delete ---
-  delete( id = null ) {
+  async delete( id = null ) {
     const index = this.getIndex( id );
 
     const deletedObject = this.products.splice( index, 1 );
