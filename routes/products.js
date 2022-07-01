@@ -10,58 +10,83 @@ router.use( express.json() ); //Middleware to manage the JSON
 
 
 // --- Create ---
-router.post( '/', async( req, res ) => {
-  const body = req.body;
+router.post( '/', async( req, res, next ) => {
+  try {
 
-  const created = await products.create( body );
+    const body = req.body;
+    const created = await products.create( body );
+    res.status( 201 ).json( created );
 
-  res.status( 201 ).json( created );
+  } catch( error ) {
+    next( error );
+  }
 } );
 
 
 // --- Read ---
-router.get( '/', async( req, res ) => { //(List)
-  const readed = await products.read();
+router.get( '/', async( req, res, next ) => { //(List)
+  try {
 
-  res.json( readed );
+    const readed = await products.read();
+    res.json( readed );
+
+  } catch( error ) {
+    next( error );
+  }
 } );
 
-router.get( '/:id', async( req, res ) => { //(Show)
-  const id = req.params.id;
+router.get( '/:id', async( req, res, next ) => { //(Show)
+  try {
 
-  const readed = await products.read( id );
+    const id = req.params.id;
+    const readed = await products.read( id );
+    res.json( readed );
 
-  res.json( readed );
+  } catch( error ) {
+    next( error );
+  }
 } );
 
 
 // --- Update ---
-router.put( '/:id', async( req, res ) => { //(Complete Update)
-  const id = req.params.id;
-  const body = req.body;
+router.put( '/:id', async( req, res, next ) => { //(Complete Update)
+  try {
 
-  const updatedProduct = await products.update( id, body, 'put' );
+    const id = req.params.id;
+    const body = req.body;
+    const updatedProduct = await products.update( id, body, 'put' );
+    res.json( updatedProduct );
 
-  res.json( updatedProduct );
+  } catch( error ) {
+    next( error );
+  }
 } );
 
-router.patch( '/:id', async( req, res ) => { //(Partial Update)
-  const id = req.params.id;
-  const body = req.body;
+router.patch( '/:id', async( req, res, next ) => { //(Partial Update)
+  try {
 
-  const updatedProduct = await products.update( id, body, 'patch' );
+    const id = req.params.id;
+    const body = req.body;
+    const updatedProduct = await products.update( id, body, 'patch' );
+    res.json( updatedProduct );
 
-  res.json( updatedProduct );
+  } catch( error ) {
+    next( error );
+  }
 } );
 
 
 // --- Delete ---
-router.delete( '/:id', async( req, res ) => {
-  const id = req.params.id;
+router.delete( '/:id', async( req, res, next ) => {
+  try {
 
-  const deletedProduct = await products.delete( id );
+    const id = req.params.id;
+    const deletedProduct = await products.delete( id );
+    res.json( deletedProduct );
 
-  res.json( deletedProduct );
+  } catch( error ) {
+    next( error );
+  }
 } );
 
 

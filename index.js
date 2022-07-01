@@ -2,6 +2,8 @@ const express = require( 'express' );
 const app = express(); //appRouter - expressRouter - router
 const apiRoutes = require( './routes' );
 
+const logErrors = require( './middlewares/error_handler.js' ).logErrors;
+const errorHandler = require( './middlewares/error_handler.js' ).errorHandler;
 
 //--
 const host = 'localhost';
@@ -13,6 +15,9 @@ app.get( '/', ( req, res ) => {
 } );
 
 apiRoutes( app ); //Routes manager
+
+app.use( logErrors );
+app.use( errorHandler );
 
 //---
 app.listen( port, host, () => {
