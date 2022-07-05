@@ -1,4 +1,5 @@
 const faker = require( 'faker' );
+const boom = require( '@hapi/boom' );
 
 class ProductServices {
 
@@ -13,19 +14,24 @@ class ProductServices {
         id: faker.datatype.uuid(),
         name: faker.commerce.productName(),
         price: parseInt( faker.commerce.price(), 10 ),
-        image: faker.image.imageUrl()
+        image: faker.image.imageUrl(),
+        isBlocked: faker.datatype.boolean()
       } );
     }
   }
 
   getIndex( id ) {
     if ( id === null ) {
-      throw new Error( 'The product ID is necessary' );
+      throw boom.badRequest( 'The product ID is necessary' );
     }
 
     const index = this.products.findIndex( ( item ) => { return( item.id === id ); } );
     if ( index === -1 ) {
-      throw new Error( 'The product ID does not exists' );
+      throw boom.notFound( 'The product with the ID "' + id + '" does not exists' );
+    }
+
+    if ( this.products[ index ].isBlocked === true ) {
+      throw boom.unauthorized( 'The product with the ID "' + id + '" is blocked' );
     }
 
     return( index );
@@ -37,19 +43,23 @@ class ProductServices {
       id: faker.datatype.uuid(),
       name: product.name,
       price: product.price,
-      image: product.image
+      image: product.image,
+      isBlocked: product.isBlocked || false
     }
 
-    this.products.push( newProduct );
-
-    return( newProduct );
+    try {
+      this.products.push( newProduct );
+      return( newProduct );
+    } catch( err ) {
+      throw boom.badImplementation( 'An error occurred while creating product' );
+    }
   }
 
   //--- Read ---
   async read( id = null ) {
     if ( id !== null ) {
-      const product = this.products.find( ( item ) => { return( item.id === id ); } );
-      return( product );
+      const index = this.getIndex( id );
+      return( this.products[ index ] );
     } else {
       return( this.products );
     }
@@ -59,29 +69,39 @@ class ProductServices {
   async update( id, data, type = 'patch' ) {
     const index = this.getIndex( id );
 
+    let updatedProduct = {};
+
     if ( type === 'put' ) {
-      this.products[ index ] = {
-        id: this.products[ index ].id,
-        ...data
+      updatedProduct = {
+        ...data,
+        id: this.products[ index ].id
       };
     } else if ( type === 'patch' ) {
-      this.products[ index ] = {
+      updatedProduct = {
         ...this.products[ index ],
-        ...data
+        ...data,
+        id: this.products[ index ].id
       }
     }
 
-    return( this.products[ index ] );
-
+    try {
+      this.products[ index ] = updatedProduct;
+      return( this.products[ index ] );
+    } catch( err ) {
+      throw boom.badImplementation( 'An error occurred while updating product with id ' + id );
+    }
   }
 
   //--- Delete ---
   async delete( id = null ) {
     const index = this.getIndex( id );
 
-    const deletedObject = this.products.splice( index, 1 );
-
-    return( deletedObject );
+    try {
+      const deletedObject = this.products.splice( index, 1 )[ 0 ];
+      return( deletedObject );
+    } catch( err ) {
+      throw boom.badImplementation( 'An error occurred while deleting product with id ' + id );
+    }
   }
 }
 
