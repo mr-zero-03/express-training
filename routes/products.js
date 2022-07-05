@@ -17,8 +17,8 @@ router.post( '/', async( req, res, next ) => {
     const created = await products.create( body );
     res.status( 201 ).json( created );
 
-  } catch( error ) {
-    next( error );
+  } catch( err ) {
+    next( err );
   }
 } );
 
@@ -30,8 +30,8 @@ router.get( '/', async( req, res, next ) => { //(List)
     const readed = await products.read();
     res.json( readed );
 
-  } catch( error ) {
-    next( error );
+  } catch( err ) {
+    next( err );
   }
 } );
 
@@ -42,8 +42,8 @@ router.get( '/:id', async( req, res, next ) => { //(Show)
     const readed = await products.read( id );
     res.json( readed );
 
-  } catch( error ) {
-    next( error );
+  } catch( err ) {
+    next( err );
   }
 } );
 
@@ -57,8 +57,8 @@ router.put( '/:id', async( req, res, next ) => { //(Complete Update)
     const updatedProduct = await products.update( id, body, 'put' );
     res.json( updatedProduct );
 
-  } catch( error ) {
-    next( error );
+  } catch( err ) {
+    next( err );
   }
 } );
 
@@ -70,8 +70,8 @@ router.patch( '/:id', async( req, res, next ) => { //(Partial Update)
     const updatedProduct = await products.update( id, body, 'patch' );
     res.json( updatedProduct );
 
-  } catch( error ) {
-    next( error );
+  } catch( err ) {
+    next( err );
   }
 } );
 
@@ -84,8 +84,8 @@ router.delete( '/:id', async( req, res, next ) => {
     const deletedProduct = await products.delete( id );
     res.json( deletedProduct );
 
-  } catch( error ) {
-    next( error );
+  } catch( err ) {
+    next( err );
   }
 } );
 
