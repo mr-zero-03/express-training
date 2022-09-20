@@ -1,13 +1,17 @@
 const express = require( 'express' );
 const router = express.Router();
 
+const path = require( 'path' );
+
 const validatorHandler = require( '../middlewares/validator_handler' );
 
 //--
-const ProductServices = require( '../services/products' );
-const products = new ProductServices();
+const fileName = path.basename( __filename, '.js' );
 
-const schemas = require( '../schemas/product_schema' );
+const Services = require( '../services/' + fileName );
+const service = new Services();
+
+const schemas = require( '../schemas/' + fileName );
 
         /* -- ROUTES -- */
 router.use( express.json() ); //Middleware to manage the JSON
@@ -15,13 +19,13 @@ router.use( express.json() ); //Middleware to manage the JSON
 
 // --- Create ---
 router.post( '/',
-  validatorHandler( schemas.createSchema, 'body' ),
+  validatorHandler( schemas.create, 'body' ),
 
   async( req, res, next ) => {
     try {
 
       const body = req.body;
-      const created = await products.create( body );
+      const created = await service.create( body );
       res.status( 201 ).json( created );
 
     } catch( err ) {
@@ -33,13 +37,13 @@ router.post( '/',
 
 
 // --- Read ---
-router.get( '/',
-  validatorHandler( schemas.listSchema, 'query' ),
+router.get( '/', //(List)
+  validatorHandler( schemas.list, 'query' ),
 
-  async( req, res, next ) => { //(List)
+  async( req, res, next ) => {
     try {
 
-      const readed = await products.read();
+      const readed = await service.read();
       res.json( readed );
 
     } catch( err ) {
@@ -49,14 +53,14 @@ router.get( '/',
 
 );
 
-router.get( '/:id',
-  validatorHandler( schemas.getSchema, 'params' ),
+router.get( '/:id', //(Show)
+  validatorHandler( schemas.get, 'params' ),
 
-  async( req, res, next ) => { //(Show)
+  async( req, res, next ) => {
     try {
 
       const id = req.params.id;
-      const readed = await products.read( id );
+      const readed = await service.read( id );
       res.json( readed );
 
     } catch( err ) {
@@ -68,34 +72,34 @@ router.get( '/:id',
 
 
 // --- Update ---
-router.put( '/:id',
-  validatorHandler( schemas.getSchema, 'params' ),
-  validatorHandler( schemas.createSchema, 'body' ),
+router.put( '/:id', //(Complete Update)
+  validatorHandler( schemas.get, 'params' ),
+  validatorHandler( schemas.putUpdate, 'body' ),
 
-  async( req, res, next ) => { //(Complete Update)
+  async( req, res, next ) => {
   try {
 
     const id = req.params.id;
     const body = req.body;
-    const updatedProduct = await products.update( id, body, 'put' );
-    res.json( updatedProduct );
+    const updated = await service.update( id, body, 'put' );
+    res.json( updated );
 
   } catch( err ) {
     next( err );
   }
 } );
 
-router.patch( '/:id',
-  validatorHandler( schemas.getSchema, 'params' ),
-  validatorHandler( schemas.updateSchema, 'body' ),
+router.patch( '/:id', //(Partial Update)
+  validatorHandler( schemas.get, 'params' ),
+  validatorHandler( schemas.patchUpdate, 'body' ),
 
-  async( req, res, next ) => { //(Partial Update)
+  async( req, res, next ) => {
     try {
 
       const id = req.params.id;
       const body = req.body;
-      const updatedProduct = await products.update( id, body, 'patch' );
-      res.json( updatedProduct );
+      const updated = await service.update( id, body, 'patch' );
+      res.json( updated );
 
     } catch( err ) {
       next( err );
@@ -107,14 +111,14 @@ router.patch( '/:id',
 
 // --- Delete ---
 router.delete( '/:id',
-  validatorHandler( schemas.getSchema, 'params' ),
+  validatorHandler( schemas.get, 'params' ),
 
   async( req, res, next ) => {
     try {
 
       const id = req.params.id;
-      const deletedProduct = await products.delete( id );
-      res.json( deletedProduct );
+      const deleted = await service.delete( id );
+      res.json( deleted );
 
     } catch( err ) {
       next( err );

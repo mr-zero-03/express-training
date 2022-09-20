@@ -1,16 +1,21 @@
 const faker = require( 'faker' );
 const boom = require( '@hapi/boom' );
 
-class ProductServices {
+const entityName = {
+  name: 'product',
+  pluralName: 'products'
+};
+
+class Services {
 
   constructor() {
-    this.products = [];
+    this.data = [];
     this.generate();
   }
 
   generate( amount = 10 ) { //(Random creation)
     for ( let i = 0; i < amount; i++ ) {
-      this.products.push( {
+      this.data.push( {
         id: faker.datatype.uuid(),
         name: faker.commerce.productName(),
         price: parseInt( faker.commerce.price(), 10 ),
@@ -22,36 +27,36 @@ class ProductServices {
 
   getIndex( id ) {
     if ( id === null ) {
-      throw boom.badRequest( 'The product ID is necessary' );
+      throw boom.badRequest( 'The ' + entityName.name + ' ID is necessary' );
     }
 
-    const index = this.products.findIndex( ( item ) => { return( item.id === id ); } );
+    const index = this.data.findIndex( ( item ) => { return( item.id === id ); } );
     if ( index === -1 ) {
-      throw boom.notFound( 'The product with the ID "' + id + '" does not exists' );
+      throw boom.notFound( 'The ' + entityName.name + ' with the ID "' + id + '" does not exists' );
     }
 
-    if ( this.products[ index ].isBlocked === true ) {
-      throw boom.unauthorized( 'The product with the ID "' + id + '" is blocked' );
+    if ( this.data[ index ].isBlocked === true ) {
+      throw boom.unauthorized( 'The ' + entityName.name + ' with the ID "' + id + '" is blocked' );
     }
 
     return( index );
   }
 
   //--- Create ---
-  async create( product ) { //(Receives JSON)
-    const newProduct = {
+  async create( element ) { //(Receives JSON)
+    const newElement = {
       id: faker.datatype.uuid(),
-      name: product.name,
-      price: product.price,
-      image: product.image,
-      isBlocked: product.isBlocked || false
+      name: element.name,
+      price: element.price,
+      image: element.image,
+      isBlocked: element.isBlocked || false
     }
 
     try {
-      this.products.push( newProduct );
-      return( newProduct );
+      this.data.push( newElement );
+      return( newElement );
     } catch( err ) {
-      throw boom.badImplementation( 'An error occurred while creating product' );
+      throw boom.badImplementation( 'An error occurred while creating ' + entityName.name );
     }
   }
 
@@ -59,36 +64,36 @@ class ProductServices {
   async read( id = null ) {
     if ( id !== null ) {
       const index = this.getIndex( id );
-      return( this.products[ index ] );
+      return( this.data[ index ] );
     } else {
-      return( this.products );
+      return( this.data );
     }
   }
 
   //--- Update ---
-  async update( id, data, type = 'patch' ) {
+  async update( id, newData, type = 'patch' ) {
     const index = this.getIndex( id );
 
-    let updatedProduct = {};
+    let updatedElement = {};
 
     if ( type === 'put' ) {
-      updatedProduct = {
-        ...data,
-        id: this.products[ index ].id
+      updatedElement = {
+        ...newData,
+        id: this.data[ index ].id
       };
     } else if ( type === 'patch' ) {
-      updatedProduct = {
-        ...this.products[ index ],
-        ...data,
-        id: this.products[ index ].id
+      updatedElement = {
+        ...this.data[ index ],
+        ...newData,
+        id: this.data[ index ].id
       }
     }
 
     try {
-      this.products[ index ] = updatedProduct;
-      return( this.products[ index ] );
+      this.data[ index ] = updatedElement;
+      return( this.data[ index ] );
     } catch( err ) {
-      throw boom.badImplementation( 'An error occurred while updating product with id ' + id );
+      throw boom.badImplementation( 'An error occurred while updating ' + entityName.name + ' with id ' + id );
     }
   }
 
@@ -97,12 +102,12 @@ class ProductServices {
     const index = this.getIndex( id );
 
     try {
-      const deletedObject = this.products.splice( index, 1 )[ 0 ];
-      return( deletedObject );
+      const deleted = this.data.splice( index, 1 )[ 0 ];
+      return( deleted );
     } catch( err ) {
-      throw boom.badImplementation( 'An error occurred while deleting product with id ' + id );
+      throw boom.badImplementation( 'An error occurred while deleting ' + entityName.name + ' with id ' + id );
     }
   }
 }
 
-module.exports = ProductServices;
+module.exports = Services;
